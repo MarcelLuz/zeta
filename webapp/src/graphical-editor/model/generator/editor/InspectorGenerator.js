@@ -68,6 +68,7 @@ class ShapeGenerator {
             'polygon': new PolygonGenerator(),
             'polyline': new PolyLineGenerator(),
             'roundedRectangle': new RoundedRectangleGenerator(),
+            'repeatingBox': new RepeatingBoxGenerator(),
         };
     }
 
@@ -360,6 +361,37 @@ class RoundedRectangleGenerator extends ElementGenerator {
             y: this.createY(2, group, 'y Position Rounded Rectangle', element, maxHeight),
             height: this.createHeight(3, group, 'Height Rounded Rectangle', maxHeight),
             width: this.createWidth(3, group, 'Width Rounded Rectangle', maxWidth),
+        };
+    }
+}
+
+class RepeatingBoxGenerator extends ElementGenerator {
+    create(element, maxHeight, maxWidth) {
+        this.counter++;
+        return {
+            [this.selector('repeatingBox',element)]: inp(this.createSpecificAttributes()),
+            [`.${element.id}`]: inp(this.createGeneralAttributes(element, maxHeight, maxWidth)),
+        };
+    }
+
+    createSpecificAttributes() {
+        const group = `Presentation Rectangle ${this.counter}`;
+        return {
+            fill: this.createFill(1, group, 'Background-Color Rectangle'),
+            'fill-opacity': this.createFillOpacity(2, group, 'Opacity Rectangle'),
+            stroke: this.createStroke(3, group, 'Line-Color Rectangle'),
+            'stroke-width': this.createStrokeWidth(4, group, 'Stroke Width Rectangle'),
+            'stroke-dasharray': this.createStrokeDasharray(5, group, 'Stroke Dash Rectangle'),
+        };
+    }
+
+    createGeneralAttributes(element, maxHeight, maxWidth) {
+        const group = `Geometry Rectangle ${this.counter}`;
+        return {
+            x: this.createX(1, group, 'x Position Rectangle', element, maxWidth),
+            y: this.createY(2, group, 'y Position Rectangle', element, maxHeight),
+            height: this.createHeight(3, group, 'Height Rectangle', maxHeight),
+            width: this.createWidth(3, group, 'Width Rectangle', maxWidth),
         };
     }
 }

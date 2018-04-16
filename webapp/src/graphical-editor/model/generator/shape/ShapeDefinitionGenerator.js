@@ -9,6 +9,7 @@ const GEOMETRIC_MODEL = {
     POLYGON: 'polygon',
     POLY_LINE: 'polyline',
     TEXTFIELD: 'textfield',
+    REPEATING_BOX: 'repeatingBox'
 };
 
 function findTop(geoElements) {
@@ -45,6 +46,7 @@ class SvgBuilder {
             [GEOMETRIC_MODEL.POLYGON]: (e, a) => `<polygon class="${e.id}" />` + this.createChildGeoElement(e, a),
             [GEOMETRIC_MODEL.POLY_LINE]: e => `<polyline class="${e.id}" />`,
             [GEOMETRIC_MODEL.TEXTFIELD]: e => `<text class="${e.id} ${e.id}" ></text>`,
+            [GEOMETRIC_MODEL.REPEATING_BOX]: (e, a) => `<rect class="${e.id}" />` + this.createChildGeoElement(e, a),
         };
     }
 
@@ -81,6 +83,7 @@ class Calculator {
             [GEOMETRIC_MODEL.POLYGON]: e => max(e.points, point => point.y),
             [GEOMETRIC_MODEL.POLY_LINE]: e => max(e.points, point => point.y),
             [GEOMETRIC_MODEL.TEXTFIELD]: e => addition(e.position.y, e.size.height),
+            [GEOMETRIC_MODEL.REPEATING_BOX]: e => this.calculateHeightForRepeatingBox(e),
         };
         this.width = {
             [GEOMETRIC_MODEL.RECTANGLE]: e => addition(e.position.x, e.size.width),
@@ -90,7 +93,27 @@ class Calculator {
             [GEOMETRIC_MODEL.POLYGON]: e => max(e.points, point => point.x),
             [GEOMETRIC_MODEL.POLY_LINE]: e => max(e.points, point => point.x),
             [GEOMETRIC_MODEL.TEXTFIELD]: e => addition(e.position.x, e.size.width),
+            [GEOMETRIC_MODEL.REPEATING_BOX]: e => this.calculateWidthForRepeatingBox(e),
         };
+    }
+
+    calculateHeightForRepeatingBox(repeatingBox) {
+        // height for repeating box = sum height of all children
+        const children = repeatingBox.childGeoElements;
+        const height = children.reduce((acc, child) => {
+            return acc + this.height[child.type](child);
+        }, 0);
+        return height;
+    }
+
+    calculateWidthForRepeatingBox(repeatingBox) {
+        // width for repeating box = max child width
+        const children = repeatingBox.childGeoElements;
+        const width = children.reduce((acc, child) => {
+            const childWidth = this.width[child.type](child);
+            return Math.max(acc, childWidth);
+        }, 0);
+        return width;
     }
 
     calculateSizeHeight(geoElements) {
@@ -147,18 +170,21 @@ class AttrBuilder {
             [GEOMETRIC_MODEL.POLYGON]: (e, a) => this.createPolygon(e, a),
             [GEOMETRIC_MODEL.POLY_LINE]: (e, a) => this.createPolygon(e, a),
             [GEOMETRIC_MODEL.TEXTFIELD]: (e, a) => this.createTextField(e, a),
+            [GEOMETRIC_MODEL.REPEATING_BOX]: (e, a) => this.createRepeatingBox(e, a),
         };
         this.xMapper = {
             [GEOMETRIC_MODEL.RECTANGLE]: e => e.position.x,
             [GEOMETRIC_MODEL.ELLIPSE]: e => e.position.x,
             [GEOMETRIC_MODEL.POLYGON]: e => min(e.points, point => point.x),
             [GEOMETRIC_MODEL.ROUND_RECT]: e => e.position.x,
+            [GEOMETRIC_MODEL.REPEATING_BOX]: e => 100,
         };
         this.yMapper = {
             [GEOMETRIC_MODEL.RECTANGLE]: e => e.position.y,
             [GEOMETRIC_MODEL.ELLIPSE]: e => e.position.y,
             [GEOMETRIC_MODEL.POLYGON]: e => min(e.points, point => point.y),
             [GEOMETRIC_MODEL.ROUND_RECT]: e => e.position.y,
+            [GEOMETRIC_MODEL.REPEATING_BOX]: e => 100,
         };
     }
 
@@ -241,6 +267,15 @@ class AttrBuilder {
                 vertical: geoElement?.align?.vertical ? geoElement?.align?.vertical : 'middle',
             },
             text: [geoElement.textBody]
+        };
+    }
+
+    createRepeatingBox(geoElement, geoElements) {
+        return {
+            x: this.getParentPositionX(geoElement, geoElements),
+            y: this.getParentPositionY(geoElement, geoElements),
+            width: 100,
+            height: 100,
         };
     }
 

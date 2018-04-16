@@ -9,6 +9,7 @@ class Generator{
             'textfield': (element, style) => this.createTextField(element, style),
             'polygon': (element, style) => this.createPolygon(element, style),
             'polyLine': (element, style) => this.createPolyLine(element, style),
+            'repeatingBox': (element, style) => this.createRepeatingBox(element, style),
         };
     }
 
@@ -88,6 +89,10 @@ class Generator{
 
     createPolyLine(element, style) {
         return { [`polyline.${element.id}`]: style };
+    }
+
+    createRepeatingBox(element, style) {
+        return { [`repeatingBox.${element.id}`]: style };
     }
 }
 
