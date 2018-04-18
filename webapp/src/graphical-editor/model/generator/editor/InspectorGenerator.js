@@ -435,7 +435,11 @@ class RepeatingBoxGenerator extends ElementGenerator {
     }
 
     createGeneralAttributes(element, maxHeight, maxWidth) {
-        const group = `Geometry Rectangle ${this.counter}`;
+        if (typeof element.size === "undefined") {
+            // repeating box has no 'size' -> set default values (0, 0)
+            element.size = {width: 0, height: 0};
+        }
+        const group = `Geometry RepeatingBox ${this.counter}`;
         return {
             x: this.createX(1, group, 'x Position Rectangle', element, maxWidth),
             y: this.createY(2, group, 'y Position Rectangle', element, maxHeight),
