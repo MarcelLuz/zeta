@@ -46,7 +46,7 @@ class SvgBuilder {
             [GEOMETRIC_MODEL.POLYGON]: (e, a) => `<polygon class="${e.id}" />` + this.createChildGeoElement(e, a),
             [GEOMETRIC_MODEL.POLY_LINE]: e => `<polyline class="${e.id}" />`,
             [GEOMETRIC_MODEL.TEXTFIELD]: e => `<text class="${e.id} ${e.id}" ></text>`,
-            [GEOMETRIC_MODEL.REPEATING_BOX]: (e, a) => `<rect class="${e.id}" />` + this.createChildGeoElement(e, a),
+            [GEOMETRIC_MODEL.REPEATING_BOX]: (e, a) => `<repeatingBox class="${e.id}" />` + this.createChildGeoElement(e, a),
         };
     }
 
