@@ -418,34 +418,17 @@ class RepeatingBoxGenerator extends ElementGenerator {
     create(element, maxHeight, maxWidth) {
         this.counter++;
         return {
-            [this.selector('repeatingBox',element)]: inp(this.createSpecificAttributes()),
-            [`.${element.id}`]: inp(this.createGeneralAttributes(element, maxHeight, maxWidth)),
+            [this.selector('repeatingBox',element)]: inp(this.createSpecificAttributes(element, maxHeight, maxWidth)),
+            [`.${element.id}`]: inp(this.createGeneralAttributes()),
         };
     }
 
-    createSpecificAttributes() {
-        const group = `Presentation Rectangle ${this.counter}`;
-        return {
-            fill: this.createFill(1, group, 'Background-Color Rectangle'),
-            'fill-opacity': this.createFillOpacity(2, group, 'Opacity Rectangle'),
-            stroke: this.createStroke(3, group, 'Line-Color Rectangle'),
-            'stroke-width': this.createStrokeWidth(4, group, 'Stroke Width Rectangle'),
-            'stroke-dasharray': this.createStrokeDasharray(5, group, 'Stroke Dash Rectangle'),
-        };
+    createSpecificAttributes(element, maxHeight, maxWidth) {
+        return {};
     }
 
-    createGeneralAttributes(element, maxHeight, maxWidth) {
-        if (typeof element.size === "undefined") {
-            // repeating box has no 'size' -> set default values (0, 0)
-            element.size = {width: 0, height: 0};
-        }
-        const group = `Geometry RepeatingBox ${this.counter}`;
-        return {
-            x: this.createX(1, group, 'x Position Rectangle', element, maxWidth),
-            y: this.createY(2, group, 'y Position Rectangle', element, maxHeight),
-            height: this.createHeight(3, group, 'Height Rectangle', maxHeight),
-            width: this.createWidth(3, group, 'Width Rectangle', maxWidth),
-        };
+    createGeneralAttributes() {
+        return {};
     }
 }
 

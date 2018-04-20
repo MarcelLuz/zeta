@@ -12,6 +12,11 @@ const GEOMETRIC_MODEL = {
     REPEATING_BOX: 'repeatingBox'
 };
 
+const REPEATING_BOX_ADD_BUTTON = {
+    WIDTH: 20,
+    HEIGHT: 20
+};
+
 function findTop(geoElements) {
     return geoElements.filter(e => e.parent === undefined || e.parent === null)
 }
@@ -46,8 +51,10 @@ class SvgBuilder {
             [GEOMETRIC_MODEL.POLYGON]: (e, a) => `<polygon class="${e.id}" />` + this.createChildGeoElement(e, a),
             [GEOMETRIC_MODEL.POLY_LINE]: e => `<polyline class="${e.id}" />`,
             [GEOMETRIC_MODEL.TEXTFIELD]: e => `<text class="${e.id} ${e.id}" ></text>`,
-            [GEOMETRIC_MODEL.REPEATING_BOX]: (e, a) => `<repeatingBox class="${e.id}" />` + this.createChildGeoElement(e, a),
+            [GEOMETRIC_MODEL.REPEATING_BOX]: (e, a) => `<repeatingBox class="${e.id}" />` + this.createAddAndRemoveButtons(e, a) + this.createChildGeoElement(e, a),
         };
+        // increment for each add button we create for our repeating boxes
+        this.addButtonCounter = 0;
     }
 
     create(geoElements) {
@@ -70,6 +77,66 @@ class SvgBuilder {
 
     findGeoElement(parent, elements) {
         return parent.childGeoElements ? parent.childGeoElements : [];
+    }
+
+    createAddAndRemoveButtons(repeatingBox, elements) {
+        const type = GEOMETRIC_MODEL.RECTANGLE;
+        const id = this.generateUuidForAddButton();
+        const addButton = {
+            conceptElement: type,
+            parent: repeatingBox.id,
+            id: id,
+            type: type,
+            position: {
+                x: 50,
+                y: 50
+            },
+            size: {
+                width: REPEATING_BOX_ADD_BUTTON.WIDTH,
+                widthMax: REPEATING_BOX_ADD_BUTTON.WIDTH,
+                widthMin: REPEATING_BOX_ADD_BUTTON.WIDTH,
+                height: REPEATING_BOX_ADD_BUTTON.HEIGHT,
+                heightMax: REPEATING_BOX_ADD_BUTTON.HEIGHT,
+                heightMin: REPEATING_BOX_ADD_BUTTON.HEIGHT
+            },
+            resizing: {
+               horizontal: false,
+               vertical: false,
+               proportional: false
+            },
+            style: {
+                transparency: 1,
+                name: 'default',
+                description: 'Default Style for "Add"-Button',
+                background: {
+                    color: {
+                        r: 255,
+                        g: 0,
+                        b: 255,
+                        a: 1,
+                        rgb: 'rgb(255,0,255)',
+                        rgba: 'rgba(255,0,255,1.0)',
+                        hex: '#ff00ff'
+                    }
+                },
+            },
+            geoElements: []
+        };
+        if (typeof repeatingBox.addedAddButton === "undefined") {
+            repeatingBox.addedAddButton = true;
+            elements.push(addButton);
+            repeatingBox.childGeoElements.unshift(addButton);
+        }
+        const createButtonFunction = this.mapper[type];
+        const btn = createButtonFunction(addButton, []);
+        return btn;
+    };
+
+    generateUuidForAddButton() {
+        // todo: use the counter variable to modify the default pattern/uuid
+        this.addButtonCounter += 1;
+        const defaultPattern = '00000000-0000-0000-0000-000000000add';
+        return defaultPattern;
     }
 }
 
@@ -102,7 +169,7 @@ class Calculator {
         const children = repeatingBox.childGeoElements;
         const height = children.reduce((acc, child) => {
             return acc + this.height[child.type](child);
-        }, 0);
+        }, REPEATING_BOX_ADD_BUTTON.HEIGHT);
         return height;
     }
 
