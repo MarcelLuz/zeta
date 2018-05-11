@@ -217,6 +217,8 @@ object ShapeParseTreeTransformer {
     val style = geoModel.style.fold(parentStyle)(s => styles.!(s.name))
     RepeatingBox(
       editable = geoModel.editable.editable,
+      size = transformGeoModelSize(geoModel.size),
+      position = transformGeoModelPosition(geoModel.position),
       forEach = geoModel.foreach.each.name,
       forAs = geoModel.foreach.as,
       childGeoModels = geoModel.children.map(transformGeoModel(_, style, styles)),

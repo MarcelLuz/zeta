@@ -88,9 +88,12 @@ object GeoModelParser extends CommonParserMethods with UniteParsers with Unorder
   }
 
   private def repeatingBox: Parser[RepeatingBoxParseTree] = {
-    val attributes = List(once(editable), once(foreach))
+    val attributes = List(once(editable), once(foreach), optional(style), once(position), once(size))
     parseGeoModel("repeatingBox", attributes).map {
       case (attrs, geoModels) => RepeatingBoxParseTree(
+        attrs.?[Style],
+        attrs.![Size],
+        attrs.![Position],
         attrs.![Editable],
         attrs.![For],
         geoModels

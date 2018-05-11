@@ -50,11 +50,12 @@ object GeoModelParseTrees {
       children: List[GeoModelParseTree]) extends GeoModelParseTree
 
   case class RepeatingBoxParseTree(
+      style: Option[Style],
+      size: Size,
+      position: Position,
       editable: Editable,
       foreach: For,
-      children: List[GeoModelParseTree]) extends GeoModelParseTree {
-    override val style: Option[Style] = None
-  }
+      children: List[GeoModelParseTree]) extends GeoModelParseTree
 
   case class LineParseTree(
       style: Option[Style],

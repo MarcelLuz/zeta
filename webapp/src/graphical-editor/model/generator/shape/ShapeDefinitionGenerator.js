@@ -51,10 +51,8 @@ class SvgBuilder {
             [GEOMETRIC_MODEL.POLYGON]: (e, a) => `<polygon class="${e.id}" />` + this.createChildGeoElement(e, a),
             [GEOMETRIC_MODEL.POLY_LINE]: e => `<polyline class="${e.id}" />`,
             [GEOMETRIC_MODEL.TEXTFIELD]: e => `<text class="${e.id} ${e.id}" ></text>`,
-            [GEOMETRIC_MODEL.REPEATING_BOX]: (e, a) => `<repeatingBox class="${e.id}" />` + this.createAddAndRemoveButtons(e, a) + this.createChildGeoElement(e, a),
+            [GEOMETRIC_MODEL.REPEATING_BOX]: (e, a) => this.createSvgForRepeatingBox(e, a),
         };
-        // increment for each add button we create for our repeating boxes
-        this.addButtonCounter = 0;
     }
 
     create(geoElements) {
@@ -79,17 +77,22 @@ class SvgBuilder {
         return parent.childGeoElements ? parent.childGeoElements : [];
     }
 
-    createAddAndRemoveButtons(repeatingBox, elements) {
+    createSvgForRepeatingBox(e, a) {
+      return `<rect class="${e.id}" />` + this.appendAddButton(e, a) + this.createChildGeoElement(e, a);
+    }
+
+    appendAddButton(repeatingBox, elements) {
         const type = GEOMETRIC_MODEL.RECTANGLE;
         const id = this.generateUuidForAddButton();
-        const addButton = {
+        let addButton = {
+            name: "AddButton",
             conceptElement: type,
             parent: repeatingBox.id,
             id: id,
             type: type,
             position: {
-                x: 50,
-                y: 50
+                x: 20,
+                y: 20
             },
             size: {
                 width: REPEATING_BOX_ADD_BUTTON.WIDTH,
@@ -105,9 +108,8 @@ class SvgBuilder {
                proportional: false
             },
             style: {
-                transparency: 1,
                 name: 'default',
-                description: 'Default Style for "Add"-Button',
+                description: 'Default Style for "Add"-Button (pink)',
                 background: {
                     color: {
                         r: 255,
@@ -118,18 +120,17 @@ class SvgBuilder {
                         rgba: 'rgba(255,0,255,1.0)',
                         hex: '#ff00ff'
                     }
-                },
+                }
             },
-            geoElements: []
+            childGeoElements: []
         };
-        if (typeof repeatingBox.addedAddButton === "undefined") {
+
+      if (typeof repeatingBox.addedAddButton === "undefined") {
             repeatingBox.addedAddButton = true;
             elements.push(addButton);
-            repeatingBox.childGeoElements.unshift(addButton);
+            repeatingBox.childGeoElements.push(addButton);
         }
-        const createButtonFunction = this.mapper[type];
-        const btn = createButtonFunction(addButton, []);
-        return btn;
+        return '';
     };
 
     generateUuidForAddButton() {
@@ -170,7 +171,7 @@ class Calculator {
         const height = children.reduce((acc, child) => {
             return acc + this.height[child.type](child);
         }, REPEATING_BOX_ADD_BUTTON.HEIGHT);
-        return height;
+        return 0;
     }
 
     calculateWidthForRepeatingBox(repeatingBox) {
@@ -180,7 +181,7 @@ class Calculator {
             const childWidth = this.width[child.type](child);
             return Math.max(acc, childWidth);
         }, 0);
-        return width;
+        return 0;
     }
 
     calculateSizeHeight(geoElements) {
@@ -244,14 +245,14 @@ class AttrBuilder {
             [GEOMETRIC_MODEL.ELLIPSE]: e => e.position.x,
             [GEOMETRIC_MODEL.POLYGON]: e => min(e.points, point => point.x),
             [GEOMETRIC_MODEL.ROUND_RECT]: e => e.position.x,
-            [GEOMETRIC_MODEL.REPEATING_BOX]: e => 100,
+            [GEOMETRIC_MODEL.REPEATING_BOX]: e => 0,
         };
         this.yMapper = {
             [GEOMETRIC_MODEL.RECTANGLE]: e => e.position.y,
             [GEOMETRIC_MODEL.ELLIPSE]: e => e.position.y,
             [GEOMETRIC_MODEL.POLYGON]: e => min(e.points, point => point.y),
             [GEOMETRIC_MODEL.ROUND_RECT]: e => e.position.y,
-            [GEOMETRIC_MODEL.REPEATING_BOX]: e => 100,
+            [GEOMETRIC_MODEL.REPEATING_BOX]: e => 20,
         };
     }
 
@@ -341,8 +342,8 @@ class AttrBuilder {
         return {
             x: this.getParentPositionX(geoElement, geoElements),
             y: this.getParentPositionY(geoElement, geoElements),
-            width: 100,
-            height: 100,
+            width: 0,
+            height: 0,
         };
     }
 

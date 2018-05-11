@@ -92,7 +92,7 @@ class Generator{
     }
 
     createRepeatingBox(element, style) {
-        return { [`repeatingBox.${element.id}`]: style };
+        return { [`rect.${element.id}`]: style };
     }
 }
 
