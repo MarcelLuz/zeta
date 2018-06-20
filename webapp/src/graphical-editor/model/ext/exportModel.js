@@ -144,7 +144,7 @@ export default (function modelExporter() {
 
                 if (attributeValues) {
                     for (var i = 0; i < attributeNames.length; i++) {
-                        if (Array.isArray(attributeValues[i])) {
+                        if (!Array.isArray(attributeValues[i])) {
                             attributeValues[i] = [attributeValues[i]];
                         }
                         if (attributeValues[i] && attributeValues[i].length > 0) {
