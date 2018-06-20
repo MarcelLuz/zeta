@@ -29,7 +29,9 @@ class AttributeValueFormat(
 ) extends OFormat[AttributeValue] {
 
   val asMapOfLists: OFormat[Map[String, List[AttributeValue]]] = {
-    val reads = Reads.map(Reads.list(this))
+    val normalReads = Reads.map(Reads.list(this))
+    val fallBackReads = Reads.map(this).map(m => m.mapValues(List(_)))
+    val reads = normalReads.orElse(fallBackReads)
     val writes = Writes.map(Writes.list(this))
     OFormat(reads, writes)
   }
