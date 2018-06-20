@@ -36,9 +36,9 @@ class GraphicalDslInstanceFormatTest extends FreeSpec with Matchers {
          |					"name": "EAttr",
          |					"globalUnique": false,
          |					"localUnique": false,
-         |					"type": "String",
+         |					"type": "string",
          |					"default": {
-         |						"type": "String",
+         |						"type": "string",
          |						"value": ""
          |					},
          |					"constant": false,
@@ -50,10 +50,10 @@ class GraphicalDslInstanceFormatTest extends FreeSpec with Matchers {
          |				}
          |			],
          |			"attributeValues": {
-         |				"EAttr": {
-         |					"value": ["..."],
-         |					"type": "String"
-         |				}
+         |				"EAttr":  [{
+         |					"value": "...",
+         |					"type": "string"
+         |				}]
          |			},
          |			"methods": []
          |		}
