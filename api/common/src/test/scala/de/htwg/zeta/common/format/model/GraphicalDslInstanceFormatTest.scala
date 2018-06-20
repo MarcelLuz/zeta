@@ -1,5 +1,7 @@
 package de.htwg.zeta.common.format.model
 
+import java.util.UUID
+
 import de.htwg.zeta.common.format.project.AttributeFormat
 import de.htwg.zeta.common.format.project.AttributeTypeFormat
 import de.htwg.zeta.common.format.project.AttributeValueFormat
@@ -23,6 +25,7 @@ class GraphicalDslInstanceFormatTest extends FreeSpec with Matchers {
         """
          |{
          |	"name": "1",
+         |  "id": "00000000-0000-0000-0000-0000f00b1a0c",
          |	"graphicalDslId": "543efc93-6501-4bcf-8fa1-15ea2444fc53",
          |	"nodes": [{
          |			"name": "cd4b689a-b166-40a3-b617-8ca49296e5b7",
